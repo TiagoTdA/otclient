@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2016 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2017 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -109,6 +109,7 @@ public:
     bool hasCreature();
     bool limitsFloorsView(bool isFreeView = false);
     bool canErase();
+    int getElevation() const;
     bool hasElevation(int elevation = 1);
     void overwriteMinimapColor(uint8 color) { m_minimapColor = color; }
 

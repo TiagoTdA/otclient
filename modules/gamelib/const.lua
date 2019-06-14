@@ -209,17 +209,18 @@ MessageModes = {
   TutorialHint            = 38,
   Thankyou                = 39,
   Market                  = 40,
-  BeyondLast              = 41,
-  MonsterYell             = 42,
-  MonsterSay              = 43,
-  Red                     = 44,
-  Blue                    = 45,
-  RVRChannel              = 46,
-  RVRAnswer               = 47,
-  RVRContinue             = 48,
-  GameHighlight           = 49,
-  NpcFromStartBlock       = 50,
-  Last                    = 51,
+  Mana                    = 41,
+  BeyondLast              = 42,
+  MonsterYell             = 43,
+  MonsterSay              = 44,
+  Red                     = 45,
+  Blue                    = 46,
+  RVRChannel              = 47,
+  RVRAnswer               = 48,
+  RVRContinue             = 49,
+  GameHighlight           = 50,
+  NpcFromStartBlock       = 51,
+  Last                    = 52,
   Invalid                 = 255,
 }
 
@@ -319,6 +320,24 @@ StoreState = {
   New = 1,
   Sale = 2,
   Timed = 3
+}
+
+AccountStatus = {
+  Ok = 0,
+  Frozen = 1,
+  Suspended = 2,
+}
+
+SubscriptionStatus = {
+  Free = 0,
+  Premium = 1,
+}
+
+ChannelEvent = {
+  Join = 0,
+  Leave = 1,
+  Invite = 2,
+  Exclude = 3,
 }
 
 -- @}

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2016 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2017 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -60,11 +60,12 @@ namespace Otc
         DrawBars = 4096,
         DrawNames = 8192,
         DrawLights = 16384,
+        DrawManaBar = 32768,
         DrawWalls = DrawOnBottom | DrawOnTop,
         DrawEverything = DrawGround | DrawGroundBorders | DrawWalls | DrawItems |
                          DrawCreatures | DrawEffects | DrawMissiles | DrawCreaturesInformation |
                          DrawStaticTexts | DrawAnimatedTexts | DrawAnimations | DrawBars | DrawNames |
-                         DrawLights
+                         DrawLights | DrawManaBar
     };
 
     enum DatOpts {

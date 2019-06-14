@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2016 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2017 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -381,6 +381,13 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             case Proto::GameServerStore:
                 parseStore(msg);
                 break;
+            // PROTOCOL>=1097
+            case Proto::GameServerStoreButtonIndicators:
+                parseStoreButtonIndicators(msg);
+                break;
+            case Proto::GameServerSetStoreDeepLink:
+                parseSetStoreDeepLink(msg);
+                break;
             // otclient ONLY
             case Proto::GameServerExtendedOpcode:
                 parseExtendedOpcode(msg);
@@ -454,6 +461,17 @@ void ProtocolGame::parseEnterGame(const InputMessagePtr& msg)
     }
 }
 
+void ProtocolGame::parseStoreButtonIndicators(const InputMessagePtr& msg)
+{
+    msg->getU8(); // unknown
+    msg->getU8(); // unknown
+}
+
+void ProtocolGame::parseSetStoreDeepLink(const InputMessagePtr& msg)
+{
+    int currentlyFeaturedServiceType = msg->getU8();
+}
+
 void ProtocolGame::parseBlessings(const InputMessagePtr& msg)
 {
     uint16 blessings = msg->getU16();
@@ -462,7 +480,7 @@ void ProtocolGame::parseBlessings(const InputMessagePtr& msg)
 
 void ProtocolGame::parsePreset(const InputMessagePtr& msg)
 {
-    uint16 preset = msg->getU32();
+    uint32 preset = msg->getU32();
 }
 
 void ProtocolGame::parseRequestPurchaseData(const InputMessagePtr& msg)
@@ -534,8 +552,14 @@ void ProtocolGame::parseCompleteStorePurchase(const InputMessagePtr& msg)
 
 void ProtocolGame::parseStoreTransactionHistory(const InputMessagePtr &msg)
 {
-    int currentPage = msg->getU16();
-    bool hasNextPage = msg->getU8() == 1;
+    int currentPage;
+    if(g_game.getClientVersion() <= 1096) {
+        currentPage = msg->getU16();
+        bool hasNextPage = msg->getU8() == 1;
+    } else {
+        currentPage = msg->getU32();
+        int pageCount = msg->getU32();
+    }
 
     int entries = msg->getU8();
     for(int i = 0; i < entries; i++) {
@@ -559,6 +583,11 @@ void ProtocolGame::parseStoreOffers(const InputMessagePtr& msg)
 
         int price = msg->getU32();
         int highlightState = msg->getU8();
+        if(highlightState == 2 && g_game.getFeature(Otc::GameIngameStoreHighlights) && g_game.getClientVersion() >= 1097) {
+            int saleValidUntilTimestamp = msg->getU32();
+            int basePrice = msg->getU32();
+        }
+
         int disabledState = msg->getU8();
         std::string disabledReason = "";
         if(g_game.getFeature(Otc::GameIngameStoreHighlights) && disabledState == 1) {
@@ -1267,15 +1296,18 @@ void ProtocolGame::parsePremiumTrigger(const InputMessagePtr& msg)
     for(int i=0;i<triggerCount;++i) {
         triggers.push_back(msg->getU8());
     }
-    bool something = msg->getU8() == 1;
+
+    if(g_game.getClientVersion() <= 1096) {
+        bool something = msg->getU8() == 1;
+    }
 }
 
 void ProtocolGame::parsePlayerInfo(const InputMessagePtr& msg)
 {
     bool premium = msg->getU8(); // premium
-    int vocation = msg->getU8(); // vocation
     if(g_game.getFeature(Otc::GamePremiumExpiration))
         int premiumEx = msg->getU32(); // premium expiration used for premium advertisement
+    int vocation = msg->getU8(); // vocation
 
     int spellCount = msg->getU16();
     std::vector<int> spells;
@@ -1319,8 +1351,17 @@ void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
     double level = msg->getU16();
     double levelPercent = msg->getU8();
 
-    if(g_game.getFeature(Otc::GameExperienceBonus))
-        double experienceBonus = msg->getDouble();
+    if(g_game.getFeature(Otc::GameExperienceBonus)) {
+        if(g_game.getClientVersion() <= 1096) {
+            double experienceBonus = msg->getDouble();
+        } else {
+            int baseXpGain = msg->getU16();
+            int voucherAddend = msg->getU16();
+            int grindingAddend = msg->getU16();
+            int storeBoostAddend = msg->getU16();
+            int huntingBoostFactor = msg->getU16();
+        }
+    }
 
     double mana;
     double maxMana;
@@ -1356,8 +1397,13 @@ void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
         regeneration = msg->getU16();
 
     double training = 0;
-    if(g_game.getFeature(Otc::GameOfflineTrainingTime))
+    if(g_game.getFeature(Otc::GameOfflineTrainingTime)) {
         training = msg->getU16();
+        if(g_game.getClientVersion() >= 1097) {
+            int remainingStoreXpBoostSeconds = msg->getU16();
+            bool canBuyMoreStoreXpBoosts = msg->getU8();
+        }
+    }
 
     m_localPlayer->setHealth(health, maxHealth);
     m_localPlayer->setFreeCapacity(freeCapacity);
@@ -1857,9 +1903,11 @@ void ProtocolGame::parseQuestLine(const InputMessagePtr& msg)
 
 void ProtocolGame::parseChannelEvent(const InputMessagePtr& msg)
 {
-    msg->getU16(); // channel id
-    g_game.formatCreatureName(msg->getString()); // player name
-    msg->getU8(); // event type
+    uint16 channelId = msg->getU16();
+    std::string name = g_game.formatCreatureName(msg->getString());
+    uint8 type = msg->getU8();
+
+    g_lua.callGlobalField("g_game", "onChannelEvent", channelId, name, type);
 }
 
 void ProtocolGame::parseItemInfo(const InputMessagePtr& msg)
@@ -1985,6 +2033,12 @@ void ProtocolGame::parseCreatureType(const InputMessagePtr& msg)
 {
     uint32 id = msg->getU32();
     uint8 type = msg->getU8();
+
+    CreaturePtr creature = g_map.getCreatureById(id);
+    if(creature)
+        creature->setType(type);
+    else
+        g_logger.traceError("could not get creature");
 }
 
 void ProtocolGame::setMapDescription(const InputMessagePtr& msg, int x, int y, int z, int width, int height)
@@ -2216,8 +2270,9 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
         int shield = msg->getU8();
 
         // emblem is sent only when the creature is not known
-        int emblem = -1;
-        int icon = -1;
+        int8 emblem = -1;
+        int8 creatureType = -1;
+        int8 icon = -1;
         bool unpass = true;
         uint8 mark;
 
@@ -2225,7 +2280,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
             emblem = msg->getU8();
 
         if(g_game.getFeature(Otc::GameThingMarks)) {
-            msg->getU8(); // creature type for summons
+            creatureType = msg->getU8();
         }
 
         if(g_game.getFeature(Otc::GameCreatureIcons)) {
@@ -2256,8 +2311,13 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
             creature->setShield(shield);
             creature->setPassable(!unpass);
             creature->setLight(light);
+
             if(emblem != -1)
                 creature->setEmblem(emblem);
+
+            if(creatureType != -1)
+                creature->setType(creatureType);
+
             if(icon != -1)
                 creature->setIcon(icon);
 

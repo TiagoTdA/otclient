@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2016 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2017 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -116,7 +116,6 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
     } else {
         if(thing->isMissile()) {
             m_floorMissiles[pos.z].push_back(thing->static_self_cast<Missile>());
-            thing->onAppear();
         } else if(thing->isAnimatedText()) {
             // this code will stack animated texts of the same color
             AnimatedTextPtr animatedText = thing->static_self_cast<AnimatedText>();

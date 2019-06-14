@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2016 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2017 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -130,7 +130,7 @@ protected:
     void processRemoveAutomapFlag(const Position& pos, int icon, const std::string& message);
 
     // outfit
-    void processOpenOutfitWindow(const Outfit& currentOufit, const std::vector<std::tuple<int, std::string, int> >& outfitList,
+    void processOpenOutfitWindow(const Outfit& currentOutfit, const std::vector<std::tuple<int, std::string, int> >& outfitList,
                                  const std::vector<std::tuple<int, std::string> >& mountList);
 
     // npc trade
@@ -173,7 +173,7 @@ public:
     void stop();
 
     // item related
-    void look(const ThingPtr& thing);
+    void look(const ThingPtr& thing, bool isBattleList = false);
     void move(const ThingPtr &thing, const Position& toPos, int count);
     void moveToParentContainer(const ThingPtr& thing, int count);
     void rotate(const ThingPtr& thing);
@@ -282,7 +282,7 @@ public:
     void requestItemInfo(const ItemPtr& item, int index);
 
     // >= 970 modal dialog
-    void answerModalDialog(int dialog, int button, int choice);
+    void answerModalDialog(uint32 dialog, int button, int choice);
 
     // >= 984 browse field
     void browseField(const Position& position);

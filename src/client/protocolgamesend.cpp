@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2016 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2017 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -830,7 +830,7 @@ void ProtocolGame::sendRequestItemInfo(int itemId, int subType, int index)
     send(msg);
 }
 
-void ProtocolGame::sendAnswerModalDialog(int dialog, int button, int choice)
+void ProtocolGame::sendAnswerModalDialog(uint32 dialog, int button, int choice)
 {
     OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientAnswerModalDialog);
@@ -880,8 +880,13 @@ void ProtocolGame::sendRequestTransactionHistory(int page, int entriesPerPage)
 {
     OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientRequestTransactionHistory);
-    msg->addU16(page);
-    msg->addU32(entriesPerPage);
+    if(g_game.getClientVersion() <= 1096) {
+        msg->addU16(page);
+        msg->addU32(entriesPerPage);
+    } else {
+        msg->addU32(page);
+        msg->addU8(entriesPerPage);
+    }
 
     send(msg);
 }

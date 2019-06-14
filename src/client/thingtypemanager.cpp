@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2016 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2017 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -199,11 +199,12 @@ void ThingTypeManager::loadOtb(const std::string& file)
             root->skip(128); // description
         }
 
+        BinaryTreeVec children = root->getChildren();
         m_reverseItemTypes.clear();
-        m_itemTypes.resize(root->getChildren().size() + 1, m_nullItemType);
-        m_reverseItemTypes.resize(root->getChildren().size() + 1, m_nullItemType);
+        m_itemTypes.resize(children.size() + 1, m_nullItemType);
+        m_reverseItemTypes.resize(children.size() + 1, m_nullItemType);
 
-        for(const BinaryTreePtr& node : root->getChildren()) {
+        for(const BinaryTreePtr& node : children) {
             ItemTypePtr itemType(new ItemType);
             itemType->unserialize(node);
             addItemType(itemType);

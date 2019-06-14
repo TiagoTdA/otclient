@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2016 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2017 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -57,6 +57,7 @@ public:
     void setDrawNames(bool enable) { m_mapView->setDrawNames(enable); }
     void setDrawHealthBars(bool enable) { m_mapView->setDrawHealthBars(enable); }
     void setDrawLights(bool enable) { m_mapView->setDrawLights(enable); }
+    void setDrawManaBar(bool enable) { m_mapView->setDrawManaBar(enable); }
     void setAnimated(bool enable) { m_mapView->setAnimated(enable); }
     void setKeepAspectRatio(bool enable);
     void setMapShader(const PainterShaderProgramPtr& shader, float fadeout, float fadein) { m_mapView->setShader(shader, fadein, fadeout); }
@@ -70,6 +71,7 @@ public:
     bool isDrawingNames() { return m_mapView->isDrawingNames(); }
     bool isDrawingHealthBars() { return m_mapView->isDrawingHealthBars(); }
     bool isDrawingLights() { return m_mapView->isDrawingLights(); }
+    bool isDrawingManaBar() { return m_mapView->isDrawingManaBar(); }
     bool isAnimating() { return m_mapView->isAnimating(); }
     bool isKeepAspectRatioEnabled() { return m_keepAspectRatio; }
     bool isLimitVisibleRangeEnabled() { return m_limitVisibleRange; }

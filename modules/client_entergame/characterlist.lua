@@ -8,6 +8,7 @@ local errorBox
 local waitingWindow
 local updateWaitEvent
 local resendWaitEvent
+local loginEvent
 
 -- private functions
 local function tryLogin(charInfo, tries)
@@ -21,7 +22,7 @@ local function tryLogin(charInfo, tries)
     if tries == 1 then
       g_game.safeLogout()
     end
-    scheduleEvent(function() tryLogin(charInfo, tries+1) end, 100)
+    loginEvent = scheduleEvent(function() tryLogin(charInfo, tries+1) end, 100)
     return
   end
 
@@ -180,13 +181,18 @@ function CharacterList.terminate()
   end
 
   if updateWaitEvent then
-    updateWaitEvent:cancel()
+    removeEvent(updateWaitEvent)
     updateWaitEvent = nil
   end
 
   if resendWaitEvent then
-    resendWaitEvent:cancel()
+    removeEvent(resendWaitEvent)
     resendWaitEvent = nil
+  end
+
+  if loginEvent then
+    removeEvent(loginEvent)
+    loginEvent = nil
   end
 
   CharacterList = nil
@@ -248,12 +254,21 @@ function CharacterList.create(characters, account, otui)
   end
 
   -- account
-  if account.premDays > 0 and account.premDays < 65535 then
-    accountStatusLabel:setText(tr("Premium Account (%s) days left", account.premDays))
-  elseif account.premDays >= 65535 then
-    accountStatusLabel:setText(tr("Lifetime Premium Account"))
-  else
-    accountStatusLabel:setText(tr('Free Account'))
+  local status = ''
+  if account.status == AccountStatus.Frozen then
+    status = tr(' (Frozen)')
+  elseif account.status == AccountStatus.Suspended then
+    status = tr(' (Suspended)')
+  end
+
+  if account.subStatus == SubscriptionStatus.Free then
+    accountStatusLabel:setText(('%s%s'):format(tr('Free Account'), status))
+  elseif account.subStatus == SubscriptionStatus.Premium then
+    if account.premDays == 0 or account.premDays == 65535 then
+      accountStatusLabel:setText(('%s%s'):format(tr('Gratis Premium Account'), status))
+    else
+      accountStatusLabel:setText(('%s%s'):format(tr('Premium Account (%s) days left', account.premDays), status))
+    end
   end
 
   if account.premDays > 0 and account.premDays <= 7 then
@@ -310,6 +325,10 @@ function CharacterList.doLogin()
                        worldName = selected.worldName,
                        characterName = selected.characterName }
     charactersWindow:hide()
+    if loginEvent then
+      removeEvent(loginEvent)
+      loginEvent = nil
+    end
     tryLogin(charInfo)
   else
     displayErrorBox(tr('Error'), tr('You must select a character to login!'))
@@ -330,12 +349,12 @@ function CharacterList.cancelWait()
   end
 
   if updateWaitEvent then
-      updateWaitEvent:cancel()
-      updateWaitEvent = nil
+    removeEvent(updateWaitEvent)
+    updateWaitEvent = nil
   end
 
   if resendWaitEvent then
-    resendWaitEvent:cancel()
+    removeEvent(resendWaitEvent)
     resendWaitEvent = nil
   end
 

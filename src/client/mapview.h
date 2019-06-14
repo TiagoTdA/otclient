@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2016 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2017 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -108,6 +108,9 @@ public:
     void setDrawLights(bool enable);
     bool isDrawingLights() { return m_drawLights; }
 
+    void setDrawManaBar(bool enable) { m_drawManaBar = enable; }
+    bool isDrawingManaBar() { return m_drawManaBar; }
+
     void move(int x, int y);
 
     void setAnimated(bool animated) { m_animated = animated; requestVisibleTilesCacheUpdate(); }
@@ -153,6 +156,7 @@ private:
     stdext::boolean<true> m_drawNames;
     stdext::boolean<true> m_drawHealthBars;
     stdext::boolean<false> m_drawLights;
+    stdext::boolean<true> m_drawManaBar;
     stdext::boolean<true> m_smooth;
 
     stdext::boolean<true> m_follow;

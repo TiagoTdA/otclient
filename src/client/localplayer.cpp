@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2016 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2017 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -166,6 +166,9 @@ void LocalPlayer::cancelWalk(Otc::Direction direction)
 
 bool LocalPlayer::autoWalk(const Position& destination)
 {
+    if(g_game.getClientVersion() <= 740 && m_position.isInRange(destination, 1, 1))
+        return g_game.walk(m_position.getDirectionFromPosition(destination));
+
     bool tryKnownPath = false;
     if(destination != m_autoWalkDestination) {
         m_knownCompletePath = false;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2016 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2017 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -193,7 +193,7 @@ std::istream& operator>>(std::istream& in, Matrix<N,M,T>& mat)
     for(int i=0;i<N;++i)
         for(int j=0;j<M;++j)
             in >> mat(i,j);
-        return in;
+    return in;
 }
 
 // faster comparing for 3x3 matrixes

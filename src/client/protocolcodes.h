@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2016 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2017 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -51,6 +51,7 @@ namespace Proto {
         GameServerLoginWait                 = 22,
         GameServerLoginSuccess              = 23,
         GameServerLoginToken                = 24,
+        GameServerStoreButtonIndicators     = 25, // 1097
         GameServerPingBack                  = 29,
         GameServerPing                      = 30,
         GameServerChallenge                 = 31,
@@ -120,6 +121,7 @@ namespace Proto {
         GameServerSpellDelay                = 164, // 870
         GameServerSpellGroupDelay           = 165, // 870
         GameServerMultiUseDelay             = 166, // 870
+        GameServerSetStoreDeepLink          = 168, // 1097
         GameServerTalk                      = 170,
         GameServerChannels                  = 171,
         GameServerOpenChannel               = 172,
@@ -276,7 +278,8 @@ namespace Proto {
         CreatureTypeMonster,
         CreatureTypeNpc,
         CreatureTypeSummonOwn,
-        CreatureTypeSummonOther
+        CreatureTypeSummonOther,
+        CreatureTypeUnknown = 0xFF
     };
 
     enum CreaturesIdRange {

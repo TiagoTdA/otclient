@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2016 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2017 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -49,7 +49,7 @@ public:
 
     void generateXteaKey();
     void setXteaKey(uint32 a, uint32 b, uint32 c, uint32 d);
-    std::vector<int> getXteaKey();
+    std::vector<uint32> getXteaKey();
     void enableXteaEncryption() { m_xteaEncryptionEnabled = true; }
 
     void enableChecksum() { m_checksumEnabled = true; }

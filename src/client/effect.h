@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2016 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2017 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@ class Effect : public Thing
     };
 
 public:
-    void draw(const Point& dest, float scaleFactor, bool animate, int offsetX = 0, int offsetY = 0, LightView *lightView = nullptr);
+    void drawEffect(const Point& dest, float scaleFactor, bool animate, int offsetX = 0, int offsetY = 0, LightView *lightView = nullptr);
 
     void setId(uint32 id);
     uint32 getId() { return m_id; }
@@ -51,7 +51,6 @@ protected:
 
 private:
     Timer m_animationTimer;
-    uint m_phaseDuration;
     uint16 m_id;
 };
 

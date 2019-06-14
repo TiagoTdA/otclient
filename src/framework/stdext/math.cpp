@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2016 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2017 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,7 @@
 namespace stdext {
 
 uint32_t adler32(const uint8_t *buffer, size_t size) {
-    register size_t a = 1, b = 0, tlen;
+    size_t a = 1, b = 0, tlen;
     while(size > 0) {
         tlen = size > 5552 ? 5552 : size;
         size -= tlen;

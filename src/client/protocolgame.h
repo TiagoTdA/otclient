@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2016 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2017 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -110,7 +110,7 @@ public:
     void sendRequestQuestLine(int questId);
     void sendNewNewRuleViolation(int reason, int action, const std::string& characterName, const std::string& comment, const std::string& translation);
     void sendRequestItemInfo(int itemId, int subType, int index);
-    void sendAnswerModalDialog(int dialog, int button, int choice);
+    void sendAnswerModalDialog(uint32 dialog, int button, int choice);
     void sendBrowseField(const Position& position);
     void sendSeekInContainer(int cid, int index);
     void sendBuyStoreOffer(int offerId, int productType, const std::string& name);
@@ -134,6 +134,8 @@ public:
     void addPosition(const OutputMessagePtr& msg, const Position& position);
 
 private:
+    void parseStoreButtonIndicators(const InputMessagePtr& msg);
+    void parseSetStoreDeepLink(const InputMessagePtr& msg);
     void parseStore(const InputMessagePtr& msg);
     void parseStoreError(const InputMessagePtr& msg);
     void parseStoreTransactionHistory(const InputMessagePtr& msg);
